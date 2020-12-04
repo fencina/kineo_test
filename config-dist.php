@@ -38,47 +38,47 @@ $CFG = new stdClass();
 // will be stored.  This database must already have been created         //
 // and a username/password created to access it.                         //
 
-$CFG->dbtype    = 'pgsql';      // 'pgsql', 'mariadb', 'mysqli', 'sqlsrv' or 'oci'
+$CFG->dbtype    = 'mysqli';      // 'pgsql', 'mariadb', 'mysqli', 'sqlsrv' or 'oci'
 $CFG->dblibrary = 'native';     // 'native' only at the moment
-$CFG->dbhost    = 'localhost';  // eg 'localhost' or 'db.isp.com' or IP
-$CFG->dbname    = 'moodle';     // database name, eg moodle
-$CFG->dbuser    = 'username';   // your database username
-$CFG->dbpass    = 'password';   // your database password
+$CFG->dbhost    = 'kineo-mysql';  // eg 'localhost' or 'db.isp.com' or IP
+$CFG->dbname    = 'kineo_test';     // database name, eg moodle
+$CFG->dbuser    = 'root';   // your database username
+$CFG->dbpass    = 'root';   // your database password
 $CFG->prefix    = 'mdl_';       // prefix to use for all table names
 $CFG->dboptions = array(
     'dbpersist' => false,       // should persistent database connections be
-                                //  used? set to 'false' for the most stable
-                                //  setting, 'true' can improve performance
-                                //  sometimes
+    //  used? set to 'false' for the most stable
+    //  setting, 'true' can improve performance
+    //  sometimes
     'dbsocket'  => false,       // should connection via UNIX socket be used?
-                                //  if you set it to 'true' or custom path
-                                //  here set dbhost to 'localhost',
-                                //  (please note mysql is always using socket
-                                //  if dbhost is 'localhost' - if you need
-                                //  local port connection use '127.0.0.1')
+    //  if you set it to 'true' or custom path
+    //  here set dbhost to 'localhost',
+    //  (please note mysql is always using socket
+    //  if dbhost is 'localhost' - if you need
+    //  local port connection use '127.0.0.1')
     'dbport'    => '',          // the TCP port number to use when connecting
-                                //  to the server. keep empty string for the
-                                //  default port
+    //  to the server. keep empty string for the
+    //  default port
     'dbhandlesoptions' => false,// On PostgreSQL poolers like pgbouncer don't
-                                // support advanced options on connection.
-                                // If you set those in the database then
-                                // the advanced settings will not be sent.
+    // support advanced options on connection.
+    // If you set those in the database then
+    // the advanced settings will not be sent.
     'dbcollation' => 'utf8mb4_unicode_ci', // MySQL has partial and full UTF-8
-                                // support. If you wish to use partial UTF-8
-                                // (three bytes) then set this option to
-                                // 'utf8_unicode_ci', otherwise this option
-                                // can be removed for MySQL (by default it will
-                                // use 'utf8mb4_unicode_ci'. This option should
-                                // be removed for all other databases.
+    // support. If you wish to use partial UTF-8
+    // (three bytes) then set this option to
+    // 'utf8_unicode_ci', otherwise this option
+    // can be removed for MySQL (by default it will
+    // use 'utf8mb4_unicode_ci'. This option should
+    // be removed for all other databases.
     // 'fetchbuffersize' => 100000, // On PostgreSQL, this option sets a limit
-                                // on the number of rows that are fetched into
-                                // memory when doing a large recordset query
-                                // (e.g. search indexing). Default is 100000.
-                                // Uncomment and set to a value to change it,
-                                // or zero to turn off the limit. You need to
-                                // set to zero if you are using pg_bouncer in
-                                // 'transaction' mode (it is fine in 'session'
-                                // mode).
+    // on the number of rows that are fetched into
+    // memory when doing a large recordset query
+    // (e.g. search indexing). Default is 100000.
+    // Uncomment and set to a value to change it,
+    // or zero to turn off the limit. You need to
+    // set to zero if you are using pg_bouncer in
+    // 'transaction' mode (it is fine in 'session'
+    // mode).
     /*
     'connecttimeout' => null, // Set connect timeout in seconds. Not all drivers support it.
     'readonly' => [          // Set to read-only slave details, to get safe reads
@@ -132,7 +132,7 @@ $CFG->dboptions = array(
 // If you need both intranet and Internet access please read
 // http://docs.moodle.org/en/masquerading
 
-$CFG->wwwroot   = 'http://example.com/moodle';
+$CFG->wwwroot   = 'http://localhost';
 
 
 //=========================================================================
@@ -148,7 +148,7 @@ $CFG->wwwroot   = 'http://example.com/moodle';
 //
 // - On Windows systems you might specify something like 'c:\moodledata'
 
-$CFG->dataroot  = '/home/example/moodledata';
+$CFG->dataroot  = '/var/moodledata';
 
 
 //=========================================================================
@@ -162,7 +162,7 @@ $CFG->dataroot  = '/home/example/moodledata';
 // to make sure the web server process (eg Apache) can access the files.
 // NOTE: the prefixed 0 is important, and don't use quotes.
 
-$CFG->directorypermissions = 02777;
+$CFG->directorypermissions = 0777;
 
 
 //=========================================================================
@@ -275,16 +275,16 @@ $CFG->admin = 'admin';
 // comment out one the following options to enable it in Moodle:
 //     $CFG->xsendfile = 'X-Sendfile';           // Apache {@see https://tn123.org/mod_xsendfile/}
 //     $CFG->xsendfile = 'X-LIGHTTPD-send-file'; // Lighttpd {@see http://redmine.lighttpd.net/projects/lighttpd/wiki/X-LIGHTTPD-send-file}
-//     $CFG->xsendfile = 'X-Accel-Redirect';     // Nginx {@see http://wiki.nginx.org/XSendfile}
+$CFG->xsendfile = 'X-Accel-Redirect';     // Nginx {@see http://wiki.nginx.org/XSendfile}
 // If your X-Sendfile implementation (usually Nginx) uses directory aliases specify them
 // in the following array setting:
-//     $CFG->xsendfilealiases = array(
-//         '/dataroot/' => $CFG->dataroot,
+$CFG->xsendfilealiases = array(
+    '/dataroot/' => $CFG->dataroot,
 //         '/cachedir/' => '/var/www/moodle/cache',    // for custom $CFG->cachedir locations
 //         '/localcachedir/' => '/var/local/cache',    // for custom $CFG->localcachedir locations
 //         '/tempdir/'  => '/var/www/moodle/temp',     // for custom $CFG->tempdir locations
 //         '/filedir'   => '/var/www/moodle/filedir',  // for custom $CFG->filedir locations
-//     );
+);
 //
 // YUI caching may be sometimes improved by slasharguments:
 //     $CFG->yuislasharguments = 1;
