@@ -47,6 +47,10 @@ COPY . /var/www
 RUN mkdir /var/moodledata
 RUN chmod 0777 /var/moodledata
 
+## Secure moodle files (this might take a while, so for dev purposes is commented. Must uncomment in production)
+#RUN chown -R root /var/www
+#RUN chmod -R 0755 /var/www
+
 # Change current user to www
 USER www
 
