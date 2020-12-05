@@ -53,3 +53,5 @@ $CFG->dbpass    = 'DB_PASSWORD';   // your database password
 6. Enjoy!
 
 _You can access your DB at localhost:3306._
+
+Developed using [code style](https://docs.moodle.org/dev/Coding_style)
