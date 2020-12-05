@@ -26,3 +26,30 @@ Moodle is written in PHP and JavaScript and uses an SQL database for storing
 the data.
 
 See <https://docs.moodle.org> for details of Moodle's many features.
+
+
+# Installation
+
+### Requirements
+- docker >= v19.03.x
+- docker-compose >= v1.13.x
+
+### Steps:
+1. Update DB settings at `config-dist.php` file:
+```
+$CFG->dbname    = 'DB_NAME';     // database name, eg moodle
+$CFG->dbuser    = 'DB_USER';   // your database username
+$CFG->dbpass    = 'DB_PASSWORD';   // your database password
+```
+
+2. Copy contents of `config-dist.php` file into a new file `config.php`
+
+3. Run `docker-compose up -d`
+
+4. Go to http://localhost
+
+5. Proceed with the Moodle's wizard installation steps.
+
+6. Enjoy!
+
+_You can access your DB at localhost:3306._
