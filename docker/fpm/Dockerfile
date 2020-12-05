@@ -22,7 +22,8 @@ RUN apt-get update && apt-get install -y \
     git \
     curl \
     iputils-ping \
-    libicu-dev
+    libicu-dev \
+    cron
 
 # Clear cache
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
@@ -43,6 +44,9 @@ RUN useradd -u 1000 -ms /bin/bash -g www www
 
 # Copy existing application directory contents
 COPY . /var/www
+
+# Configure Moodle cron
+RUN crontab -u www ./docker/fpm/crontab.txt
 
 RUN mkdir /var/moodledata
 RUN chmod 0777 /var/moodledata
