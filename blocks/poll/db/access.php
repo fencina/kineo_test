@@ -1,5 +1,7 @@
 <?php
 
+defined('MOODLE_INTERNAL') || die('MOODLE_INTERNAL constant not defined');
+
 /**
  * Poll block caps.
  */
@@ -14,13 +16,15 @@ $capabilities = [
         'clonepermissionsfrom' => 'moodle/my:manageblocks',
     ],
     'block/poll:addinstance' => [
-        'riskbitmask' => RISK_SPAM | RISK_XSS,
-        'captype' => 'write',
+        'captype' => 'read',
         'contextlevel' => CONTEXT_BLOCK,
-        'archetypes' => [
-            'editingteacher' => CAP_ALLOW,
-            'manager' => CAP_ALLOW
-        ],
-        'clonepermissionsfrom' => 'moodle/site:manageblocks',
+        'legacy' => [
+            'guest' => CAP_PREVENT,
+            'student' => CAP_PREVENT,
+            'teacher' => CAP_PREVENT,
+            'editingteacher' => CAP_PREVENT,
+            'coursecreator' => CAP_PREVENT,
+            'manager' => CAP_ALLOW,
+        ]
     ],
 ];
