@@ -3,6 +3,7 @@
 require_once('../../config.php');
 require_once('poll_form.php');
 require_once('db/poll_repository.php');
+require_once($CFG->dirroot.'/blocks/poll/lib.php');
 
 global $DB, $OUTPUT, $PAGE;
 
@@ -37,17 +38,16 @@ $pollForm->set_data($toform);
 
 if($pollForm->is_cancelled()) {
     // Cancelled forms redirect to the home page. TODO redirect to previous url
-    $courseurl = new moodle_url('/', array('id' => $id));
+    $courseurl = new moodle_url('/?redirect=0');
     redirect($courseurl);
 } else if ($fromform = $pollForm->get_data()) {
-    if ($fromform->id != 0) {
-        // TODO store user answer. Validate if has previous answer for user
+    if ($fromform->id) {
         update_poll($fromform);
     } else {
         create_poll($fromform);
     }
 
-    $courseurl = new moodle_url('/course/view.php', array('id' => $courseid));
+    $courseurl = new moodle_url('/?redirect=0');
     redirect($courseurl);
 } else {
     $site = get_site();

@@ -11,6 +11,7 @@ $string['default_text'] = 'Default poll text';
 $string['edit'] = 'Edit';
 $string['formheader'] = 'Poll form';
 $string['edithtml'] = 'Edit poll';
+$string['answerpoll'] = 'Answer poll';
 $string['editpage'] = 'Edit poll page';
 $string['pagetitle'] = 'pagetitle';
 $string['displayedhtml'] = 'displayedhtml';

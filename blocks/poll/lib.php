@@ -100,3 +100,14 @@ function build_option($pollId, $desc, $tag) {
 
     return $option;
 }
+
+function answer_poll($data) {
+    $repository = new poll_repository();
+    $repository->create_answer($data);
+}
+
+function has_answered_poll($pollId, $userId) {
+    $repository = new poll_repository();
+    $answer = $repository->get_answers_for_poll_and_user($pollId, $userId);
+    return !empty($answer);
+}

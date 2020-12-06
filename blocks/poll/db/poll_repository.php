@@ -17,14 +17,14 @@ class poll_repository {
         $this->db =& $DB;
     }
 
-    public function get_poll_by_block($blockId)
+    public function get_poll_by_block($blockid)
     {
-        return $this->db->get_record(self::TABLE_POLLS, array('blockid' => $blockId));
+        return $this->db->get_record(self::TABLE_POLLS, compact('blockid'));
     }
 
-    public function get_poll_by_id($pollId)
+    public function get_poll_by_id($id)
     {
-        $poll = $this->db->get_record(self::TABLE_POLLS, array('id' => $pollId));
+        $poll = $this->db->get_record(self::TABLE_POLLS, compact('id'));
 
         $poll->options = $this->get_options_for_poll($poll->id);
         return $poll;
@@ -40,9 +40,9 @@ class poll_repository {
         return $this->db->update_record(self::TABLE_POLLS, $poll);
     }
 
-    public function get_options_for_poll($pollId)
+    public function get_options_for_poll($pollid)
     {
-        return $this->db->get_records(self::TABLE_POLL_OPTIONS, ['pollid' => $pollId]);
+        return $this->db->get_records(self::TABLE_POLL_OPTIONS, compact('pollid'));
     }
 
     public function create_option($data)
@@ -55,8 +55,18 @@ class poll_repository {
         return $this->db->update_record(self::TABLE_POLL_OPTIONS, $option);
     }
 
-    public function delete_option($optionId)
+    public function delete_option($id)
     {
-        return $this->db->delete_records(self::TABLE_POLL_OPTIONS, ['id' => $optionId]);
+        return $this->db->delete_records(self::TABLE_POLL_OPTIONS, compact('id'));
+    }
+
+    public function create_answer($data)
+    {
+        return $this->db->insert_record(self::TABLE_POLL_ANSWERS, $data);
+    }
+
+    public function get_answers_for_poll_and_user($pollid, $userid)
+    {
+        return $this->db->get_record(self::TABLE_POLL_ANSWERS, compact('pollid', 'userid'));
     }
 }

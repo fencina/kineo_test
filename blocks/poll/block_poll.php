@@ -40,14 +40,13 @@ class block_poll extends block_base {
                 // si no sos el creador y respondiste a la encuesta, solo podés ver las respuestas
                 $footer = html_writer::link($url, get_string('edit', 'block_poll'));
             } else {
-
                 $pageparam = [
                     'blockid' => $this->instance->id,
                     'courseid' => $COURSE->id,
-                    'id' => $poll->id,
+                    'pollid' => $poll->id,
                 ];
 
-                $editurl = new moodle_url('/blocks/poll/view.php', $pageparam);
+                $editurl = new moodle_url('/blocks/poll/answer.php', $pageparam);
                 $footer = html_writer::link($editurl, 'Answer');
             }
         } else {
