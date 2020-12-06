@@ -19,18 +19,15 @@ class poll_form extends moodleform {
             $mform->setType('question', PARAM_RAW);
             $mform->addRule('question', null, 'required', null, 'client');
 
-            // TODO add options dynamically
-            $mform->addElement('text', 'option_1', 'Option 1');
-            $mform->setType('option_1', PARAM_RAW);
-
-            $mform->addElement('text', 'option_2', 'Option 2');
-            $mform->setType('option_2', PARAM_RAW);
-
-            $mform->addElement('text', 'option_3', 'Option 3');
-            $mform->setType('option_3', PARAM_RAW);
+            // TODO add options dynamically. For now only 3 options are allowed. Check blocks/poll/lib.php
+            $options = block_poll_options();
+            foreach ($options as $i => $option) {
+                $mform->addElement('text', 'option_'.$i, 'Option');
+                $mform->setType('option_'.$i, PARAM_RAW);
+            }
         }
 
-        // TODO store user's answer
+        // TODO show answer form. Extract to another file.
         $answerPoll = false;
         if ($answerPoll) {
             $optionNames = block_poll_options();

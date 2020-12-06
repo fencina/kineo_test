@@ -24,7 +24,10 @@ class poll_repository {
 
     public function get_poll_by_id($pollId)
     {
-        return $this->db->get_record(self::TABLE_POLLS, array('id' => $pollId));
+        $poll = $this->db->get_record(self::TABLE_POLLS, array('id' => $pollId));
+
+        $poll->options = $this->get_options_for_poll($poll->id);
+        return $poll;
     }
 
     public function create_poll($data)
@@ -37,8 +40,23 @@ class poll_repository {
         return $this->db->update_record(self::TABLE_POLLS, $poll);
     }
 
+    public function get_options_for_poll($pollId)
+    {
+        return $this->db->get_records(self::TABLE_POLL_OPTIONS, ['pollid' => $pollId]);
+    }
+
     public function create_option($data)
     {
         return $this->db->insert_record(self::TABLE_POLL_OPTIONS, $data);
+    }
+
+    public function update_option($option)
+    {
+        return $this->db->update_record(self::TABLE_POLL_OPTIONS, $option);
+    }
+
+    public function delete_option($optionId)
+    {
+        return $this->db->delete_records(self::TABLE_POLL_OPTIONS, ['id' => $optionId]);
     }
 }

@@ -28,24 +28,21 @@ $editurl = new moodle_url('/blocks/poll/view.php', array('id' => $id, 'courseid'
 $editnode = $settingsnode->add(get_string('editpage', 'block_poll'), $editurl);
 $editnode->make_active();
 
-$poll = new poll_form();
-$repository = new poll_repository();
+$pollForm = new poll_form();
 
 $toform['blockid'] = $blockid;
 $toform['courseid'] = $courseid;
 $toform['id'] = $id;
-$poll->set_data($toform);
+$pollForm->set_data($toform);
 
-if($poll->is_cancelled()) {
+if($pollForm->is_cancelled()) {
     // Cancelled forms redirect to the home page. TODO redirect to previous url
     $courseurl = new moodle_url('/', array('id' => $id));
     redirect($courseurl);
-} else if ($fromform = $poll->get_data()) {
+} else if ($fromform = $pollForm->get_data()) {
     if ($fromform->id != 0) {
         // TODO store user answer. Validate if has previous answer for user
-        if (!$repository->update_poll($fromform)) {
-            print_error('updateerror', 'block_simplehtml');
-        }
+        update_poll($fromform);
     } else {
         create_poll($fromform);
     }
@@ -56,16 +53,20 @@ if($poll->is_cancelled()) {
     $site = get_site();
     echo $OUTPUT->header();
     if ($id) {
-        $pollpage = $repository->get_poll_by_id($id);
+        $repository = new poll_repository();
+        $poll = $repository->get_poll_by_id($id);
         if($viewpage) {
-            block_poll_print_page($pollpage);
+            block_poll_print_page($poll);
         } else {
             // Editing poll
-            $poll->set_data($pollpage);
-            $poll->display();
+            foreach ($poll->options as $i => $option) {
+                $poll->{$option->tag} = $option->description;
+            }
+            $pollForm->set_data($poll);
+            $pollForm->display();
         }
     } else {
-        $poll->display();
+        $pollForm->display();
     }
     echo $OUTPUT->footer();
 }

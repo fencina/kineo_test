@@ -20,6 +20,7 @@
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
         <FIELD NAME="pollid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Poll's id"/>
+        <FIELD NAME="tag" TYPE="text" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Option tag"/>
         <FIELD NAME="description" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="Option's description"/>
       </FIELDS>
       <KEYS>
