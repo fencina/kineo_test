@@ -1,6 +1,6 @@
 <?php
 
-require_once('constants.php');
+require_once('db/poll_repository.php');
 
 /**
  * Block poll class definition.
@@ -23,40 +23,41 @@ class block_poll extends block_base {
 
         $this->content = new stdClass;
         $this->content->text = $this->text;
-        global $COURSE, $DB, $PAGE;
+        global $COURSE, $PAGE, $USER;
 
-        $canmanage = $PAGE->user_is_editing($this->instance->id);
+        $canEditBlock = $PAGE->user_is_editing();
+        $footer = '';
 
-        if ($pollpages = $DB->get_records(TABLE_POLLS, array('blockid' => $this->instance->id))) {
-            $this->content->text .= html_writer::start_tag('ul');
-            foreach ($pollpages as $pollpage) {
-                if ($canmanage) {
-                    $pageparam = array('blockid' => $this->instance->id,
-                        'courseid' => $COURSE->id,
-                        'id' => $pollpage->id);
-                    $editurl = new moodle_url('/blocks/poll/view.php', $pageparam);
-                    $editpicurl = new moodle_url('/pix/f/edit.gif');
-                    $edit = html_writer::link($editurl, 'Answer');
-                } else {
-                    $edit = '';
-                }
-                $pageurl = new moodle_url('/blocks/poll/view.php', array('blockid' => $this->instance->id, 'courseid' => $COURSE->id, 'id' => $pollpage->id, 'viewpage' => true));
-                $this->content->text .= html_writer::start_tag('li');
-                $this->content->text .= html_writer::link($pageurl, $pollpage->pagetitle);
-                $this->content->text .= $edit;
-                $this->content->text .= html_writer::end_tag('li');
+        $repository = new poll_repository();
+        if ($poll = $repository->get_poll_by_block($this->instance->id)) {
+            $canEditPoll = $poll->userid == $USER->id;
+            if ($canEditPoll) {
+                $url = new moodle_url('/blocks/poll/view.php', array('blockid' => $this->instance->id, 'courseid' => $COURSE->id, 'id' => $poll->id));
+
+                // TODO si sos el creador y la encuesta no tiene ninguna respuesta, se puede modificar
+                // si sos creador pero la encuesta ya tiene respuesta, solo podés ver las respuestas
+                // si no sos el creador y no respondiste la encuesta ves el link para responderla
+                // si no sos el creador y respondiste a la encuesta, solo podés ver las respuestas
+                $footer = html_writer::link($url, get_string('edit', 'block_poll'));
+            } else {
+
+                $pageparam = [
+                    'blockid' => $this->instance->id,
+                    'courseid' => $COURSE->id,
+                    'id' => $poll->id,
+                ];
+
+                $editurl = new moodle_url('/blocks/poll/view.php', $pageparam);
+                $footer = html_writer::link($editurl, 'Answer');
             }
-            $this->content->text .= html_writer::end_tag('ul');
+        } else {
+            if ($canEditBlock) {
+                $url = new moodle_url('/blocks/poll/view.php', array('blockid' => $this->instance->id, 'courseid' => $COURSE->id));
+                $footer = html_writer::link($url, get_string('edit', 'block_poll'));
+            }
         }
 
-        $url = new moodle_url('/blocks/poll/view.php', array('blockid' => $this->instance->id, 'courseid' => $COURSE->id));
-
-        // TODO si sos el creador y la encuesta no tiene ninguna respuesta, se puede modificar
-        // si sos creador pero la encuesta ya tiene respuesta, solo podés ver las respuestas
-        // si no sos el creador y no respondiste la encuesta ves el link para responderla
-        // si no sos el creador y respondiste a la encuesta, solo podés ver las respuestas
-        $this->content->footer = html_writer::link($url, get_string('edit', 'block_poll'));
-
+        $this->content->footer = $footer;
         return $this->content;
     }
 

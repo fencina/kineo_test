@@ -1,5 +1,7 @@
 <?php
 
+require_once('db/poll_repository.php');
+
 function block_poll_options() {
     return [
         // id => option
@@ -25,24 +27,26 @@ function block_poll_print_page($poll, $return = false) {
 }
 
 function create_poll($fromform) {
-    global $DB;
+    global $USER;
 
-    $pollId = $DB->insert_record(TABLE_POLLS, $fromform);
+    $repository = new poll_repository();
+
+    $fromform->userid = $USER->id;
+    $pollId = $repository->create_poll($fromform);
 
     create_options($pollId, $fromform);
 }
 
 function create_options($pollId, $fromform) {
-    global $DB;
+    $repository = new poll_repository();
 
     $option1 = build_option($pollId, $fromform->option_1);
-    $DB->insert_record(TABLE_POLL_OPTIONS, $option1);
-
     $option2 = build_option($pollId, $fromform->option_2);
-    $DB->insert_record(TABLE_POLL_OPTIONS, $option2);
-
     $option3 = build_option($pollId, $fromform->option_3);
-    $DB->insert_record(TABLE_POLL_OPTIONS, $option3);
+
+    $repository->create_option($option1);
+    $repository->create_option($option2);
+    $repository->create_option($option3);
 }
 
 function build_option($pollId, $desc) {

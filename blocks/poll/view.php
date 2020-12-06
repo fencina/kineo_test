@@ -2,7 +2,7 @@
 
 require_once('../../config.php');
 require_once('poll_form.php');
-require_once('constants.php');
+require_once('db/poll_repository.php');
 
 global $DB, $OUTPUT, $PAGE;
 
@@ -29,6 +29,7 @@ $editnode = $settingsnode->add(get_string('editpage', 'block_poll'), $editurl);
 $editnode->make_active();
 
 $poll = new poll_form();
+$repository = new poll_repository();
 
 $toform['blockid'] = $blockid;
 $toform['courseid'] = $courseid;
@@ -42,7 +43,7 @@ if($poll->is_cancelled()) {
 } else if ($fromform = $poll->get_data()) {
     if ($fromform->id != 0) {
         // TODO store user answer. Validate if has previous answer for user
-        if (!$DB->update_record(TABLE_POLLS, $fromform)) {
+        if (!$repository->update_poll($fromform)) {
             print_error('updateerror', 'block_simplehtml');
         }
     } else {
@@ -55,16 +56,16 @@ if($poll->is_cancelled()) {
     $site = get_site();
     echo $OUTPUT->header();
     if ($id) {
-        $pollpage = $DB->get_record(TABLE_POLLS, array('id' => $id));
+        $pollpage = $repository->get_poll_by_id($id);
         if($viewpage) {
-            block_simplehtml_print_page($pollpage);
+            block_poll_print_page($pollpage);
         } else {
+            // Editing poll
             $poll->set_data($pollpage);
             $poll->display();
         }
     } else {
         $poll->display();
     }
-
     echo $OUTPUT->footer();
 }
