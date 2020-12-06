@@ -46,12 +46,7 @@ if($poll->is_cancelled()) {
             print_error('updateerror', 'block_simplehtml');
         }
     } else {
-        $fromform->title = 'Hardcode Title';
-        $fromform->question = 'Hardcode Question';
-        $fromform->userid = 2;
-        if (!$DB->insert_record(TABLE_POLLS, $fromform)) {
-            print_error('inserterror', 'block_simplehtml');
-        }
+        create_poll($fromform);
     }
 
     $courseurl = new moodle_url('/course/view.php', array('id' => $courseid));
