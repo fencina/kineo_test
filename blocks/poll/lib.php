@@ -10,6 +10,92 @@ function block_poll_options() {
     ];
 }
 
+function get_block_content_footer($blockId) {
+    global $PAGE;
+    $repository = new poll_repository();
+
+    $footer = '';
+
+    if ($poll = $repository->get_poll_by_block($blockId)) {
+        $footer =  get_footer_for_existent_poll($poll, $blockId);
+    } else if ($PAGE->user_is_editing()) {
+        $footer = get_edit_link($blockId);
+    }
+
+    return $footer;
+}
+
+function get_edit_link($blockId, $pollId = null) {
+    global $COURSE;
+
+    $urlParams = [
+        'blockid' => $blockId,
+        'courseid' => $COURSE->id,
+    ];
+
+    if ($pollId) {
+        $urlParams['id'] = $pollId;
+    }
+
+    $url = new moodle_url('/blocks/poll/view.php', $urlParams);
+    return html_writer::link($url, get_string('edit', 'block_poll'));
+}
+
+function get_results_link($blockId, $pollId) {
+    global $COURSE;
+
+    $pageparam = [
+        'blockid' => $blockId,
+        'courseid' => $COURSE->id,
+        'pollid' => $pollId,
+    ];
+
+    $pollResultsUrl = new moodle_url('/blocks/poll/results.php', $pageparam);
+    return html_writer::link($pollResultsUrl, get_string('pollresults', 'block_poll'));
+}
+
+function get_answer_link($blockId, $pollId) {
+    global $COURSE;
+
+    $pageparam = [
+        'blockid' => $blockId,
+        'courseid' => $COURSE->id,
+        'pollid' => $pollId,
+    ];
+
+    $answerUrl = new moodle_url('/blocks/poll/answer.php', $pageparam);
+    return html_writer::link($answerUrl, get_string('answerpoll', 'block_poll'));
+}
+
+function get_footer_for_existent_poll($poll, $blockId) {
+    global $USER;
+
+    $userCanEditPoll = $poll->userid == $USER->id;
+    if ($userCanEditPoll) {
+        return get_footer_for_poll_editor($poll, $blockId);
+    } else {
+        return get_footer_for_poll_participant($blockId, $poll);
+    }
+}
+
+function get_footer_for_poll_editor($poll, $blockId) {
+    if (!poll_has_answers($poll->id)) {
+        return get_edit_link($blockId, $poll->id);
+    }
+
+    return get_results_link($blockId, $poll->id);
+}
+
+function get_footer_for_poll_participant($blockId, $poll) {
+    global $USER;
+
+    if (has_answered_poll($poll->id, $USER->id)) {
+        return get_results_link($blockId, $poll->id);
+    }
+
+    return get_answer_link($blockId, $poll->id);
+}
+
 function block_poll_print_page($poll, $return = false) {
     global $OUTPUT, $COURSE;
     $display = $OUTPUT->heading($poll->title);
@@ -32,7 +118,6 @@ function create_poll($data) {
 
     $data->userid = $USER->id;
     $pollId = $repository->create_poll($data);
-
     create_options($pollId, $data);
 }
 
@@ -59,11 +144,6 @@ function update_options($pollId, $data) {
     $repository = new poll_repository();
 
     $currentOptions = $repository->get_options_for_poll($pollId);
-
-    if (empty($currentOptions)) {
-        create_options($pollId, $data);
-        return;
-    }
 
     foreach ($currentOptions as $option) {
         if (empty($data->{$option->tag})) {
