@@ -72,7 +72,7 @@ class poll_repository {
 
     public function get_answers_for_poll($pollid)
     {
-        return $this->db->get_record(self::TABLE_POLL_ANSWERS, compact('pollid'));
+        return $this->db->get_records(self::TABLE_POLL_ANSWERS, compact('pollid'));
     }
 
     public function get_poll_results($pollid)
