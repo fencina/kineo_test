@@ -10,11 +10,9 @@
 
 2. Copy contents of `config-dist.php` file into a new file `config.php` in root directory.
 
-3. Update DB settings at `config.php` file:
+3. Update DB name setting at `config.php` file:
 ```
 $CFG->dbname    = 'DB_NAME';     // database name, eg moodle
-$CFG->dbuser    = 'DB_USER';   // your database username
-$CFG->dbpass    = 'DB_PASSWORD';   // your database password
 ```
 
 4. Run `docker-compose up -d`. _(Make sure ports 80 and 3306 are not in use)_
