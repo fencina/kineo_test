@@ -13,18 +13,18 @@ $blockid = required_param('blockid', PARAM_INT);
 $id = optional_param('id', 0, PARAM_INT);
 $viewpage = optional_param('viewpage', false, PARAM_BOOL);
 
-if (!$course = $DB->get_record('course', array('id' => $courseid))) {
+if (!$course = $DB->get_record('course', ['id' => $courseid])) {
     print_error('invalidcourse', 'block_poll', $courseid);
 }
 
 require_login($course);
 
-$PAGE->set_url('/blocks/poll/view.php', array('id' => $courseid));
+$PAGE->set_url('/blocks/poll/view.php', ['id' => $courseid]);
 $PAGE->set_pagelayout('standard');
 $PAGE->set_heading(get_string('edithtml', 'block_poll'));
 
 $settingsnode = $PAGE->settingsnav->add(get_string('pluginname', 'block_poll'));
-$editurl = new moodle_url('/blocks/poll/view.php', array('id' => $id, 'courseid' => $courseid, 'blockid' => $blockid));
+$editurl = new moodle_url('/blocks/poll/view.php', ['id' => $id, 'courseid' => $courseid, 'blockid' => $blockid]);
 // TODO Set poll title as navigation text
 $editnode = $settingsnode->add(get_string('editpage', 'block_poll'), $editurl);
 $editnode->make_active();
@@ -50,7 +50,6 @@ if($pollForm->is_cancelled()) {
     $courseurl = new moodle_url('/?redirect=0');
     redirect($courseurl);
 } else {
-    $site = get_site();
     echo $OUTPUT->header();
     if ($id) {
         $repository = new poll_repository();

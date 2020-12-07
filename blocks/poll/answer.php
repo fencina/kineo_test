@@ -45,11 +45,9 @@ if($answerForm->is_cancelled()) {
     $fromform->userid = $USER->id;
     answer_poll($fromform);
 
-    $courseurl = new moodle_url('/course/view.php', array('id' => $courseid));
+    $courseurl = new moodle_url('/course/view.php', ['id' => $courseid]);
     redirect($courseurl);
 } else {
-    $site = get_site();
-
     echo $OUTPUT->header();
     $poll = $repository->get_poll_by_id($pollid);
 
@@ -62,7 +60,7 @@ if($answerForm->is_cancelled()) {
         }
 
         // Answering
-        foreach ($poll->options as $i => $option) {
+        foreach ($poll->options as $option) {
             $poll->{$option->tag} = $option->description;
         }
         $answerForm->set_data($poll);

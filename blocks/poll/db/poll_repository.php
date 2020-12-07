@@ -69,4 +69,21 @@ class poll_repository {
     {
         return $this->db->get_record(self::TABLE_POLL_ANSWERS, compact('pollid', 'userid'));
     }
+
+    public function get_answers_for_poll($pollid)
+    {
+        return $this->db->get_record(self::TABLE_POLL_ANSWERS, compact('pollid'));
+    }
+
+    public function get_poll_results($pollid)
+    {
+        $sql = "select po.id, po.tag, IF(pa.id is not null, count(*), 0) as 'answers_count'
+                from poll_options as po
+                left join poll_answers as pa on pa.polloptionid = po.id and po.pollid = pa.pollid
+                where po.pollid = ?
+                group by po.id
+                ;";
+
+        return $this->db->get_records_sql($sql, [$pollid]);
+    }
 }

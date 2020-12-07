@@ -12,6 +12,7 @@ $string['edit'] = 'Edit';
 $string['formheader'] = 'Poll form';
 $string['edithtml'] = 'Edit poll';
 $string['answerpoll'] = 'Answer poll';
+$string['pollresults'] = 'Poll Results';
 $string['editpage'] = 'Edit poll page';
 $string['pagetitle'] = 'pagetitle';
 $string['displayedhtml'] = 'displayedhtml';

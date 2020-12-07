@@ -1,6 +1,7 @@
 <?php
 
 require_once('db/poll_repository.php');
+require_once($CFG->dirroot.'/blocks/poll/lib.php');
 
 /**
  * Block poll class definition.
@@ -32,26 +33,43 @@ class block_poll extends block_base {
         if ($poll = $repository->get_poll_by_block($this->instance->id)) {
             $canEditPoll = $poll->userid == $USER->id;
             if ($canEditPoll) {
-                $url = new moodle_url('/blocks/poll/view.php', array('blockid' => $this->instance->id, 'courseid' => $COURSE->id, 'id' => $poll->id));
+                if (poll_has_answers($poll->id)) {
+                    $pageparam = [
+                        'blockid' => $this->instance->id,
+                        'courseid' => $COURSE->id,
+                        'pollid' => $poll->id,
+                    ];
 
-                // TODO si sos el creador y la encuesta no tiene ninguna respuesta, se puede modificar
-                // si sos creador pero la encuesta ya tiene respuesta, solo podés ver las respuestas
-                // si no sos el creador y no respondiste la encuesta ves el link para responderla
-                // si no sos el creador y respondiste a la encuesta, solo podés ver las respuestas
-                $footer = html_writer::link($url, get_string('edit', 'block_poll'));
+                    $pollResultsUrl = new moodle_url('/blocks/poll/results.php', $pageparam);
+                    $footer = html_writer::link($pollResultsUrl, get_string('pollresults', 'block_poll'));
+                } else {
+                    $url = new moodle_url('/blocks/poll/view.php', ['blockid' => $this->instance->id, 'courseid' => $COURSE->id, 'id' => $poll->id]);
+                    $footer = html_writer::link($url, get_string('edit', 'block_poll'));
+                }
             } else {
-                $pageparam = [
-                    'blockid' => $this->instance->id,
-                    'courseid' => $COURSE->id,
-                    'pollid' => $poll->id,
-                ];
+                if (has_answered_poll($poll->id, $USER->id)) {
+                    $pageparam = [
+                        'blockid' => $this->instance->id,
+                        'courseid' => $COURSE->id,
+                        'pollid' => $poll->id,
+                    ];
 
-                $editurl = new moodle_url('/blocks/poll/answer.php', $pageparam);
-                $footer = html_writer::link($editurl, 'Answer');
+                    $pollResultsUrl = new moodle_url('/blocks/poll/results.php', $pageparam);
+                    $footer = html_writer::link($pollResultsUrl, get_string('pollresults', 'block_poll'));
+                } else {
+                    $pageparam = [
+                        'blockid' => $this->instance->id,
+                        'courseid' => $COURSE->id,
+                        'pollid' => $poll->id,
+                    ];
+
+                    $answerUrl = new moodle_url('/blocks/poll/answer.php', $pageparam);
+                    $footer = html_writer::link($answerUrl, get_string('answerpoll', 'block_poll'));
+                }
             }
         } else {
             if ($canEditBlock) {
-                $url = new moodle_url('/blocks/poll/view.php', array('blockid' => $this->instance->id, 'courseid' => $COURSE->id));
+                $url = new moodle_url('/blocks/poll/view.php', ['blockid' => $this->instance->id, 'courseid' => $COURSE->id]);
                 $footer = html_writer::link($url, get_string('edit', 'block_poll'));
             }
         }

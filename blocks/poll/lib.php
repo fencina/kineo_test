@@ -111,3 +111,15 @@ function has_answered_poll($pollId, $userId) {
     $answer = $repository->get_answers_for_poll_and_user($pollId, $userId);
     return !empty($answer);
 }
+
+function poll_has_answers($pollId) {
+    $repository = new poll_repository();
+    $answers = $repository->get_answers_for_poll($pollId);
+
+    return !empty($answers);
+}
+
+function get_poll_results($pollId) {
+    $repository = new poll_repository();
+    return $repository->get_poll_results($pollId);
+}
