@@ -27,21 +27,6 @@ class poll_form extends moodleform {
             }
         }
 
-        // TODO show answer form. Extract to another file.
-        $answerPoll = false;
-        if ($answerPoll) {
-            $optionNames = block_poll_options();
-            $options = [];
-
-            foreach ($optionNames as $id => $option) {
-                $options[] = $mform->createElement('radio', 'answer', '', $option, $id);
-            }
-            $mform->addGroup($options, 'radioar', '', [' '], false);
-            // TODO remove default and add required rule
-
-
-        }
-
         $mform->addElement('hidden', 'blockid');
         $mform->addElement('hidden', 'courseid');
         $mform->addElement('hidden','id','0');

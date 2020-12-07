@@ -25,7 +25,6 @@ $PAGE->set_heading(get_string('edithtml', 'block_poll'));
 
 $settingsnode = $PAGE->settingsnav->add(get_string('pluginname', 'block_poll'));
 $editurl = new moodle_url('/blocks/poll/view.php', ['id' => $id, 'courseid' => $courseid, 'blockid' => $blockid]);
-// TODO Set poll title as navigation text
 $editnode = $settingsnode->add(get_string('editpage', 'block_poll'), $editurl);
 $editnode->make_active();
 
