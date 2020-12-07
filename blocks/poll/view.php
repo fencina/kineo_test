@@ -56,6 +56,10 @@ if($pollForm->is_cancelled()) {
         if($viewpage) {
             block_poll_print_page($poll);
         } else {
+            if (poll_has_answers($poll->id)) {
+                $courseurl = new moodle_url('/?redirect=0');
+                redirect($courseurl);
+            }
             // Editing poll
             foreach ($poll->options as $i => $option) {
                 $poll->{$option->tag} = $option->description;
