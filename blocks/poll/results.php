@@ -44,7 +44,7 @@ if ($poll->userid != $USER->id && !has_answered_poll($pollid, $USER->id)) {
 
 $pollResults = get_poll_results($pollid);
 foreach ($pollResults as $pollResult) {
-    $poll->{$pollResult->tag} = $pollResult->answers_count . ' votes';
+    $poll->{$pollResult->tag} = $pollResult->answers_count . ' ' . get_string('votes', 'block_poll');
 }
 $answerForm->set_data($poll);
 $answerForm->display();
