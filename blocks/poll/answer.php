@@ -10,7 +10,6 @@ global $DB, $OUTPUT, $PAGE, $USER;
 $courseid = required_param('courseid', PARAM_INT);
 $blockid = required_param('blockid', PARAM_INT);
 $pollid = required_param('pollid', PARAM_INT);
-$viewpage = optional_param('viewpage', false, PARAM_BOOL);
 
 if (!$course = $DB->get_record('course', ['id' => $courseid])) {
     print_error('invalidcourse', 'block_poll', $courseid);
@@ -21,8 +20,6 @@ require_login($course);
 $repository = new poll_repository();
 $poll = $repository->get_poll_by_id($pollid);
 
-$PAGE->set_url('/blocks/poll/answer.php', ['id' => $courseid, 'pollid' => $pollid]);
-$PAGE->set_pagelayout('standard');
 $PAGE->set_heading($poll->title);
 
 $settingsnode = $PAGE->settingsnav->add(get_string('pluginname', 'block_poll'));
@@ -39,8 +36,7 @@ $answerForm->set_data($toform);
 
 if($answerForm->is_cancelled()) {
     // Cancelled forms redirect to the home page. TODO redirect to previous url
-    $courseurl = new moodle_url('/?redirect=0');
-    redirect($courseurl);
+    redirect(new moodle_url('/?redirect=0'));
 } else if ($fromform = $answerForm->get_data()) {
     $fromform->userid = $USER->id;
     answer_poll($fromform);
@@ -51,21 +47,16 @@ if($answerForm->is_cancelled()) {
     echo $OUTPUT->header();
     $poll = $repository->get_poll_by_id($pollid);
 
-    if($viewpage) {
-        block_poll_print_page($poll);
-    } else {
-        if (has_answered_poll($pollid, $USER->id)) {
-            $courseurl = new moodle_url('/?redirect=0');
-            redirect($courseurl);
-        }
-
-        // Answering
-        foreach ($poll->options as $option) {
-            $poll->{$option->tag} = $option->description;
-        }
-        $answerForm->set_data($poll);
-        $answerForm->display();
+    if (has_answered_poll($pollid, $USER->id)) {
+        redirect(new moodle_url('/?redirect=0'));
     }
+
+    // Answering
+    foreach ($poll->options as $option) {
+        $poll->{$option->tag} = $option->description;
+    }
+    $answerForm->set_data($poll);
+    $answerForm->display();
 
     echo $OUTPUT->footer();
 }

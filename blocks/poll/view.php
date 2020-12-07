@@ -9,9 +9,7 @@ global $DB, $OUTPUT, $PAGE;
 
 $courseid = required_param('courseid', PARAM_INT);
 $blockid = required_param('blockid', PARAM_INT);
-
 $id = optional_param('id', 0, PARAM_INT);
-$viewpage = optional_param('viewpage', false, PARAM_BOOL);
 
 if (!$course = $DB->get_record('course', ['id' => $courseid])) {
     print_error('invalidcourse', 'block_poll', $courseid);
@@ -19,8 +17,6 @@ if (!$course = $DB->get_record('course', ['id' => $courseid])) {
 
 require_login($course);
 
-$PAGE->set_url('/blocks/poll/view.php', ['id' => $courseid]);
-$PAGE->set_pagelayout('standard');
 $PAGE->set_heading(get_string('edithtml', 'block_poll'));
 
 $settingsnode = $PAGE->settingsnav->add(get_string('pluginname', 'block_poll'));
@@ -37,8 +33,7 @@ $pollForm->set_data($toform);
 
 if($pollForm->is_cancelled()) {
     // Cancelled forms redirect to the home page. TODO redirect to previous url
-    $courseurl = new moodle_url('/?redirect=0');
-    redirect($courseurl);
+    redirect(new moodle_url('/?redirect=0'));
 } else if ($fromform = $pollForm->get_data()) {
     if ($fromform->id) {
         update_poll($fromform);
@@ -46,27 +41,24 @@ if($pollForm->is_cancelled()) {
         create_poll($fromform);
     }
 
-    $courseurl = new moodle_url('/?redirect=0');
-    redirect($courseurl);
+    redirect(new moodle_url('/?redirect=0'));
 } else {
     echo $OUTPUT->header();
     if ($id) {
         $repository = new poll_repository();
         $poll = $repository->get_poll_by_id($id);
-        if($viewpage) {
-            block_poll_print_page($poll);
-        } else {
-            if (poll_has_answers($poll->id)) {
-                $courseurl = new moodle_url('/?redirect=0');
-                redirect($courseurl);
-            }
-            // Editing poll
-            foreach ($poll->options as $i => $option) {
-                $poll->{$option->tag} = $option->description;
-            }
-            $pollForm->set_data($poll);
-            $pollForm->display();
+
+        if (poll_has_answers($poll->id)) {
+            $courseurl = new moodle_url('/?redirect=0');
+            redirect($courseurl);
         }
+
+        // Editing poll
+        foreach ($poll->options as $i => $option) {
+            $poll->{$option->tag} = $option->description;
+        }
+        $pollForm->set_data($poll);
+        $pollForm->display();
     } else {
         $pollForm->display();
     }

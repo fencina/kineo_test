@@ -73,9 +73,9 @@ function get_footer_for_existent_poll($poll, $blockId) {
     $userCanEditPoll = $poll->userid == $USER->id;
     if ($userCanEditPoll) {
         return get_footer_for_poll_editor($poll, $blockId);
-    } else {
-        return get_footer_for_poll_participant($blockId, $poll);
     }
+
+    return get_footer_for_poll_participant($blockId, $poll);
 }
 
 function get_footer_for_poll_editor($poll, $blockId) {
@@ -89,6 +89,10 @@ function get_footer_for_poll_editor($poll, $blockId) {
 function get_footer_for_poll_participant($blockId, $poll) {
     global $USER;
 
+    if (!poll_has_options($poll->id)) {
+        return '';
+    }
+
     if (has_answered_poll($poll->id, $USER->id)) {
         return get_results_link($blockId, $poll->id);
     }
@@ -97,7 +101,7 @@ function get_footer_for_poll_participant($blockId, $poll) {
 }
 
 function block_poll_print_page($poll, $return = false) {
-    global $OUTPUT, $COURSE;
+    global $OUTPUT;
     $display = $OUTPUT->heading($poll->title);
 
     $display .= $OUTPUT->box_start();
@@ -197,6 +201,13 @@ function poll_has_answers($pollId) {
     $answers = $repository->get_answers_for_poll($pollId);
 
     return !empty($answers);
+}
+
+function poll_has_options($pollId) {
+    $repository = new poll_repository();
+    $poll = $repository->get_poll_by_id($pollId);
+
+    return !empty($poll->options);
 }
 
 function get_poll_results($pollId) {

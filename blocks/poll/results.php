@@ -20,8 +20,6 @@ require_login($course);
 $repository = new poll_repository();
 $poll = $repository->get_poll_by_id($pollid);
 
-$PAGE->set_url('/blocks/poll/results.php', ['id' => $courseid, 'pollid' => $pollid]);
-$PAGE->set_pagelayout('standard');
 $PAGE->set_heading($poll->title);
 
 $settingsnode = $PAGE->settingsnav->add(get_string('pluginname', 'block_poll'));
